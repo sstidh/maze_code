@@ -51,8 +51,6 @@ def straighten_to_line():
 
     # turn off headlights
     CutebotPro.turn_off_all_headlights()
-    # go forward again
-    CutebotPro.distance_running(CutebotProOrientation.ADVANCE, 15.35, CutebotProDistanceUnits.CM)
 
 def detect_line():
     # get the line tracking offset
@@ -64,8 +62,6 @@ def detect_line():
         straighten_to_line()
         line = 1
     return line
-
-
 
 ## LINE FOLLOWING
 #set variables
@@ -144,7 +140,7 @@ def follow_line():
         CutebotPro.color_light(RGBLight.RGBR, 0xff0000)
  
  
-     # reset speed and headlights
+    # reset speed and headlights
     CutebotPro.turn_off_all_headlights()
     lwheel = 10
     rwheel = 10
@@ -173,12 +169,14 @@ M = 6
 field = []
 for j in range(N):
     row = []
-    for i in range (M):
+    for i in range(M):
         row.append(0)
     field.append(row)
 
 #originate empty path taken
-path = []
+path: List[number] = [] #Java script, defines array as an 
+llocation = []
+rlocation = []
 first_move_done = False
 maze_exit = False
 magnet_count = 1
@@ -197,16 +195,15 @@ def turn_right():
 
 def move_forward():
     CutebotPro.pwm_cruise_control(10, 10)
-    basic.pause(500)
     line_found = 0
     while line_found == 0:
         line_found = detect_line()
     CutebotPro.distance_running(CutebotProOrientation.ADVANCE, 15.35, CutebotProDistanceUnits.CM)
     basic.pause(100)
 
-move_forward()
+#move_forward()
 
-'''
+
 #maze navigation before exit magnet is located 
 while magnet_count < 3:
     mag = magnet_detect()
@@ -222,7 +219,7 @@ while magnet_count < 3:
         maze_exit = True
     #continue maze navigation
     else:   
-        # Look left
+    # Look left
         turn_left()
         left = check_distance()
         basic.pause(100)
@@ -230,7 +227,7 @@ while magnet_count < 3:
             move_forward()
             path.append(2)
         else:
-        # Face forward again
+        # Look forward
             turn_right()
             front = check_distance()
             basic.pause(100)
@@ -238,7 +235,7 @@ while magnet_count < 3:
                 move_forward()
                 path.append(1)
             else:
-                # Look right
+            # Look right
                 turn_right()
                 right = check_distance()
                 basic.pause(100)
@@ -252,13 +249,29 @@ while magnet_count < 3:
                     move_forward()
                     path.append(0)
 
-                    #Depth first algorithm
+                    #Depth first algorithm (forward favoring)
                     for i in range(len(path)):
                         if path[i] == 2:
-                            ...
+                            llocation.append(i)
                         elif path[i] == 3:
-                            ...
-'''
+                            rlocation.append(i)
+                        
+                    if llocation[-1] > rlocation[-1]:
+                            intersect = llocation[-1]
+                    elif rlocation[-1] > llocation[-1]:
+                            intersect = rlocation[-1]
+                    
+
+
+## TRANSMISSION
+def on_button_pressed_a():
+    basic.pause(1000)
+    for i in range(len(path)):
+        radio.send_value("step", path[i])
+        basic.pause(700)  # Small delay for good transmission
+input.on_button_pressed(Button.A, on_button_pressed_a)
+radio.set_group(1)
+
 
 
 

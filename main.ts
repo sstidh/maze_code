@@ -1,4 +1,10 @@
 let row: any[];
+let i: number;
+let mag: number;
+let left: number;
+let front: number;
+let right: number;
+let intersect: any;
 // # MAGNET DETECTION
 // magnet checking function
 function magnet_detect(): number {
@@ -58,8 +64,6 @@ function straighten_to_line() {
     }
     //  turn off headlights
     CutebotPro.turnOffAllHeadlights()
-    //  go forward again
-    CutebotPro.distanceRunning(CutebotProOrientation.Advance, 15.35, CutebotProDistanceUnits.Cm)
 }
 
 function detect_line(): number {
@@ -183,13 +187,16 @@ let M = 6
 let field = []
 for (let j = 0; j < N; j++) {
     row = []
-    for (let i = 0; i < M; i++) {
+    for (i = 0; i < M; i++) {
         row.push(0)
     }
     field.push(row)
 }
 // originate empty path taken
-let path = []
+let path : number[] = []
+// Java script, defines array as an 
+let llocation = []
+let rlocation = []
 let first_move_done = false
 let maze_exit = false
 let magnet_count = 1
@@ -210,7 +217,6 @@ function turn_right() {
 
 function move_forward() {
     CutebotPro.pwmCruiseControl(10, 10)
-    basic.pause(500)
     let line_found = 0
     while (line_found == 0) {
         line_found = detect_line()
@@ -219,61 +225,88 @@ function move_forward() {
     basic.pause(100)
 }
 
-move_forward()
-/** 
-#maze navigation before exit magnet is located 
-while magnet_count < 3:
+// move_forward()
+// maze navigation before exit magnet is located 
+while (magnet_count < 3) {
     mag = magnet_detect()
-    #magnet found
-    if mag == 1:
-       magnet_count+=1
-       #magnet inside maze located
-       if magnet_count == 2:
-           path.append(4)
+    // magnet found
+    if (mag == 1) {
+        magnet_count += 1
+        // magnet inside maze located
+        if (magnet_count == 2) {
+            path.push(4)
+        }
+        
+    }
     
-    #end mazed navigation
-    if magnet_count == 3:
-        maze_exit = True
-    #continue maze navigation
-    else:   
-        # Look left
+    // end mazed navigation
+    if (magnet_count == 3) {
+        maze_exit = true
+    } else {
+        // continue maze navigation
+        //  Look left
         turn_left()
         left = check_distance()
         basic.pause(100)
-        if left > 16:
+        if (left > 16) {
             move_forward()
-            path.append(2)
-        else:
-        # Face forward again
+            path.push(2)
+        } else {
+            //  Look forward
             turn_right()
             front = check_distance()
             basic.pause(100)
-            if front > 16:
+            if (front > 16) {
                 move_forward()
-                path.append(1)
-            else:
-                # Look right
+                path.push(1)
+            } else {
+                //  Look right
                 turn_right()
                 right = check_distance()
                 basic.pause(100)
-                if right > 16:
+                if (right > 16) {
                     turn_right()
                     move_forward()
-                    path.append(3)
-                else:
-                    # Dead end
+                    path.push(3)
+                } else {
+                    //  Dead end
                     turn_right()
                     move_forward()
-                    path.append(0)
-
-                    #Depth first algorithm
-                    for i in range(len(path)):
-                        if path[i] == 2:
-                            ...
-                        elif path[i] == 3:
-                            ...
-
- */
+                    path.push(0)
+                    // Depth first algorithm (forward favoring)
+                    for (i = 0; i < path.length; i++) {
+                        if (path[i] == 2) {
+                            llocation.push(i)
+                        } else if (path[i] == 3) {
+                            rlocation.push(i)
+                        }
+                        
+                    }
+                    if (llocation[-1] > rlocation[-1]) {
+                        intersect = llocation[-1]
+                    } else if (rlocation[-1] > llocation[-1]) {
+                        intersect = rlocation[-1]
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+}
+// # TRANSMISSION
+//  Small delay for good transmission
+input.onButtonPressed(Button.A, function on_button_pressed_a() {
+    basic.pause(1000)
+    for (let i = 0; i < path.length; i++) {
+        radio.sendValue("step", path[i])
+        basic.pause(700)
+    }
+})
+radio.setGroup(1)
 /** 
 # Output path after reaching end
 serial.write_line("Maze path taken:")
