@@ -6,9 +6,66 @@ def magnet_detect():
     if force >= 500:
         mag = 1
          # turn headlights green
-        CutebotPro.color_light(CutebotProRGBLight.RGBL, 0x00ff00)
-        CutebotPro.color_light(CutebotProRGBLight.RGBR, 0x00ff00)
-        return mag
+        CutebotPro.color_light(RGBLight.RGBL, 0x00ff00)
+        CutebotPro.color_light(RGBLight.RGBR, 0x00ff00)
+    return mag
+
+## DIRECTION CORRECTION FUNCTIONS
+def straighten_to_line():
+    #keep counter to break while loop
+    count = 0
+
+    CutebotPro.pwm_cruise_control(20, 20)
+    basic.pause(50)
+
+    # turn on headlights(pink = 247, 25, 236)
+    CutebotPro.single_headlights(RGBLight.RGBL, 247, 25, 236)
+    CutebotPro.single_headlights(RGBLight.RGBR, 247, 25, 236)
+    #keep turning till we are straight
+    while(abs(CutebotPro.get_offset()) > 0 and count < 10):
+        # update count of while loop iterations
+        count = count + 1
+        #get offset
+        error = CutebotPro.get_offset()
+        # set turn speed
+        speed = 30 + (error/3000)*70
+        # turn right
+        if error > 0:
+            #turn on right headlight(blue = 51, 255, 252)
+            CutebotPro.single_headlights(RGBLight.RGBR, 51, 255, 252)
+            CutebotPro.pwm_cruise_control(speed, -1*speed)
+            basic.pause(30)
+            # turn off headlights
+            CutebotPro.turn_off_all_headlights()
+        # turn left
+        if error < 0:
+            #turn on left headlight(blue = 51, 255, 252)
+            CutebotPro.single_headlights(RGBLight.RGBL, 51, 255, 252)
+            CutebotPro.pwm_cruise_control(-1*speed, speed)
+            basic.pause(30)
+            # turn off headlights
+            CutebotPro.turn_off_all_headlights()
+
+        CutebotPro.pwm_cruise_control(0, 0)
+        basic.pause(20)
+
+    # turn off headlights
+    CutebotPro.turn_off_all_headlights()
+    # go forward again
+    CutebotPro.distance_running(CutebotProOrientation.ADVANCE, 15.35, CutebotProDistanceUnits.CM)
+
+def detect_line():
+    # get the line tracking offset
+    error = CutebotPro.get_offset()
+    line = 0
+    # detects black line
+    if abs(error) < 3000:
+        CutebotPro.pwm_cruise_control(0, 0)
+        straighten_to_line()
+        line = 1
+    return line
+
+
 
 ## LINE FOLLOWING
 #set variables
@@ -16,9 +73,6 @@ lwheel = 20
 rwheel = 20
 error = 0
 maxturnspeed = 50
-
-#magnet present
-mag = 0
 
 # set starting speed
 CutebotPro.pwm_cruise_control(lwheel, rwheel)
@@ -59,8 +113,8 @@ def follow_line():
         rwheel = 0
  
          #turn on both headlight (red)
-        CutebotPro.color_light(CutebotProRGBLight.RGBL, 0xff0000)
-        CutebotPro.color_light(CutebotProRGBLight.RGBR, 0xff0000)
+        CutebotPro.color_light(RGBLight.RGBL, 0xff0000)
+        CutebotPro.color_light(RGBLight.RGBR, 0xff0000)
      # if detects a big line
      #### Intersection ####
      # if detects a big line (error is less than 100)
@@ -70,24 +124,24 @@ def follow_line():
             turn_r()
             basic.pause(100)
              #yellow light
-            CutebotPro.color_light(CutebotProRGBLight.RGBL, 0xffff00)
+            CutebotPro.color_light(RGBLight.RGBL, 0xffff00)
         elif error < 0: # robot is to the right of intersection (make a big left turn)
             error = 3000/error
             turn_l()
             basic.pause(100)
              #yellow light
-            CutebotPro.color_light(CutebotProRGBLight.RGBR, 0xffff00)
+            CutebotPro.color_light(RGBLight.RGBR, 0xffff00)
 
      # too far left
     if error > 0:
         turn_r()
          # turn on left headlight (red)
-        CutebotPro.color_light(CutebotProRGBLight.RGBL, 0xff0000)
+        CutebotPro.color_light(RGBLight.RGBL, 0xff0000)
      # too far right
     if error < 0:
         turn_l()
          #turn on right headlight (red)
-        CutebotPro.color_light(CutebotProRGBLight.RGBR, 0xff0000)
+        CutebotPro.color_light(RGBLight.RGBR, 0xff0000)
  
  
      # reset speed and headlights
@@ -98,15 +152,15 @@ def follow_line():
     CutebotPro.pwm_cruise_control(lwheel, rwheel)
     basic.pause(5)
  
-#basic.forever(on_forever)
+
 #Run line follow till magnet detected then stop
-while (magnet_detect() == 0):
-    follow_line()
+
+#while (magnet_detect() == 0):
+    #follow_line()
  # stop robot
 CutebotPro.pwm_cruise_control(0, 0)
 basic.pause(100)
 CutebotPro.turn_off_all_headlights()
-
 
 
 ## START MAZE
@@ -142,9 +196,17 @@ def turn_right():
     basic.pause(100)
 
 def move_forward():
-    CutebotPro.distance_running(CutebotProOrientation.ADVANCE, 30.7, CutebotProDistanceUnits.CM)
+    CutebotPro.pwm_cruise_control(10, 10)
+    basic.pause(500)
+    line_found = 0
+    while line_found == 0:
+        line_found = detect_line()
+    CutebotPro.distance_running(CutebotProOrientation.ADVANCE, 15.35, CutebotProDistanceUnits.CM)
     basic.pause(100)
 
+move_forward()
+
+'''
 #maze navigation before exit magnet is located 
 while magnet_count < 3:
     mag = magnet_detect()
@@ -196,11 +258,11 @@ while magnet_count < 3:
                             ...
                         elif path[i] == 3:
                             ...
+'''
 
 
 
-
-
+'''
 # Output path after reaching end
 serial.write_line("Maze path taken:")
 for step in path:
@@ -212,4 +274,4 @@ for step in path:
         serial.write_line("Right")
     elif step == 0:
         serial.write_line("Backtrack")
-
+'''
