@@ -248,20 +248,7 @@ while magnet_count < 3:
                     turn_right()
                     move_forward()
                     path.append(0)
-
-                    #Depth first algorithm (forward favoring)
-                    for i in range(len(path)):
-                        if path[i] == 2:
-                            llocation.append(i)
-                        elif path[i] == 3:
-                            rlocation.append(i)
-                        
-                    if llocation[-1] > rlocation[-1]:
-                            intersect = llocation[-1]
-                    elif rlocation[-1] > llocation[-1]:
-                            intersect = rlocation[-1]
                     
-
 
 ## TRANSMISSION
 def on_button_pressed_a():

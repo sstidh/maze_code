@@ -4,7 +4,6 @@ let mag: number;
 let left: number;
 let front: number;
 let right: number;
-let intersect: any;
 // # MAGNET DETECTION
 // magnet checking function
 function magnet_detect(): number {
@@ -273,21 +272,6 @@ while (magnet_count < 3) {
                     turn_right()
                     move_forward()
                     path.push(0)
-                    // Depth first algorithm (forward favoring)
-                    for (i = 0; i < path.length; i++) {
-                        if (path[i] == 2) {
-                            llocation.push(i)
-                        } else if (path[i] == 3) {
-                            rlocation.push(i)
-                        }
-                        
-                    }
-                    if (llocation[-1] > rlocation[-1]) {
-                        intersect = llocation[-1]
-                    } else if (rlocation[-1] > llocation[-1]) {
-                        intersect = rlocation[-1]
-                    }
-                    
                 }
                 
             }
