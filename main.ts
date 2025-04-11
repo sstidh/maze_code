@@ -4,6 +4,8 @@ let mag: number;
 let left: number;
 let front: number;
 let right: number;
+let grid: number;
+let disp: any;
 // # MAGNET DETECTION
 // magnet checking function
 function magnet_detect(): number {
@@ -180,7 +182,7 @@ CutebotPro.turnOffAllHeadlights()
 // # START MAZE
 CutebotPro.distanceRunning(CutebotProOrientation.Advance, 15.35, CutebotProDistanceUnits.Cm)
 basic.pause(1000)
-// originate maze matrix
+// originate maze matrix and depth first search variables
 let N = 5
 let M = 6
 let field = []
@@ -191,11 +193,11 @@ for (let j = 0; j < N; j++) {
     }
     field.push(row)
 }
+let grid_type : number[] = []
+// Java script, defines array as an integer array
+let intersection : number[] = []
 // originate empty path taken
 let path : number[] = []
-// Java script, defines array as an 
-let llocation = []
-let rlocation = []
 let first_move_done = false
 let maze_exit = false
 let magnet_count = 1
@@ -247,35 +249,67 @@ while (magnet_count < 3) {
         turn_left()
         left = check_distance()
         basic.pause(100)
+        //  Face forward again
+        turn_right()
+        front = check_distance()
+        basic.pause(100)
+        //  Look right
+        turn_right()
+        right = check_distance()
+        basic.pause(100)
+        //  Face forward again
+        turn_left()
+        basic.pause(100)
+        //  Maze Nav -- Depth first (left favoring)
+        if (left > 16 && front > 16 && right > 16) {
+            grid = 1
+            grid_type.push(grid)
+            intersection.push(grid_type.length)
+        } else if (left > 16 && front > 16) {
+            grid = 2
+            grid_type.push(grid)
+            intersection.push(grid_type.length)
+        } else if (left > 16 && right > 16) {
+            grid = 3
+            grid_type.push(grid)
+            intersection.push(grid_type.length)
+        } else if (front > 16 && right > 16) {
+            grid = 4
+            grid_type.push(grid)
+            intersection.push(grid_type.length)
+        } else if (left > 16) {
+            grid = 5
+            grid_type.push(grid)
+        } else if (front > 16) {
+            grid = 6
+            grid_type.push(grid)
+        } else if (right > 16) {
+            grid = 7
+            grid_type.push(grid)
+        } else {
+            grid = 8
+            grid_type.push(grid)
+        }
+        
+        //  Movememnt Decision
         if (left > 16) {
+            turn_left()
             move_forward()
             path.push(2)
-        } else {
-            //  Look forward
+        } else if (front > 16) {
+            move_forward()
+            path.push(1)
+        } else if (right > 16) {
             turn_right()
-            front = check_distance()
-            basic.pause(100)
-            if (front > 16) {
-                move_forward()
-                path.push(1)
-            } else {
-                //  Look right
-                turn_right()
-                right = check_distance()
-                basic.pause(100)
-                if (right > 16) {
-                    turn_right()
-                    move_forward()
-                    path.push(3)
-                } else {
-                    //  Dead end
-                    turn_right()
-                    move_forward()
-                    path.push(0)
-                }
-                
-            }
-            
+            move_forward()
+            path.push(3)
+        } else {
+            //  Dead end
+            turn_left()
+            turn_left()
+            move_forward()
+            path.push(0)
+            disp = path.length - intersection[-1] + 1
         }
         
     }
@@ -291,17 +325,3 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
     }
 })
 radio.setGroup(1)
-/** 
-# Output path after reaching end
-serial.write_line("Maze path taken:")
-for step in path:
-    if step == 1:
-        serial.write_line("Forward")
-    elif step == 2:
-        serial.write_line("Left")
-    elif step == 3:
-        serial.write_line("Right")
-    elif step == 0:
-        serial.write_line("Backtrack")
-
- */

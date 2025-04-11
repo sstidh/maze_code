@@ -163,7 +163,7 @@ CutebotPro.turn_off_all_headlights()
 CutebotPro.distance_running(CutebotProOrientation.ADVANCE, 15.35, CutebotProDistanceUnits.CM)
 basic.pause(1000)
 
-#originate maze matrix
+#originate maze matrix and depth first search variables
 N = 5
 M = 6
 field = []
@@ -173,10 +173,12 @@ for j in range(N):
         row.append(0)
     field.append(row)
 
+grid_type: List[number] = [] #Java script, defines array as an integer array
+intersection: List[number] = []
+
+
 #originate empty path taken
-path: List[number] = [] #Java script, defines array as an 
-llocation = []
-rlocation = []
+path: List[number] = [] 
 first_move_done = False
 maze_exit = False
 magnet_count = 1
@@ -219,36 +221,77 @@ while magnet_count < 3:
         maze_exit = True
     #continue maze navigation
     else:   
-    # Look left
+        # Look left
         turn_left()
         left = check_distance()
         basic.pause(100)
+
+        # Face forward again
+        turn_right()
+        front = check_distance()
+        basic.pause(100)
+
+        # Look right
+        turn_right()
+        right = check_distance()
+        basic.pause(100)
+
+        # Face forward again
+        turn_left()
+        basic.pause(100)
+
+        # Maze Nav -- Depth first (left favoring)
+        if left>16 and front>16 and right>16:
+            grid = 1
+            grid_type.append(grid)
+            intersection.append(len(grid_type))
+        elif left > 16 and front > 16:
+            grid = 2
+            grid_type.append(grid)
+            intersection.append(len(grid_type))
+        elif left > 16 and right > 16:
+            grid = 3
+            grid_type.append(grid)
+            intersection.append(len(grid_type))
+        elif front > 16 and right > 16:
+            grid = 4
+            grid_type.append(grid)
+            intersection.append(len(grid_type))
+        elif left > 16:
+            grid = 5
+            grid_type.append(grid)
+        elif front > 16:
+            grid = 6
+            grid_type.append(grid)
+        elif right > 16:
+            grid = 7
+            grid_type.append(grid)
+        else:
+            grid = 8
+            grid_type.append(grid)
+
+        # Movememnt Decision
         if left > 16:
+            turn_left()
             move_forward()
             path.append(2)
-        else:
-        # Look forward
+        elif front > 16:
+            move_forward()
+            path.append(1)
+        elif right > 16:
             turn_right()
-            front = check_distance()
-            basic.pause(100)
-            if front > 16:
-                move_forward()
-                path.append(1)
-            else:
-            # Look right
-                turn_right()
-                right = check_distance()
-                basic.pause(100)
-                if right > 16:
-                    turn_right()
-                    move_forward()
-                    path.append(3)
-                else:
-                    # Dead end
-                    turn_right()
-                    move_forward()
-                    path.append(0)
-                    
+            move_forward()
+            path.append(3)
+        else:
+            # Dead end
+            turn_left()
+            turn_left()
+            move_forward()
+            path.append(0)
+            disp = len(path) - intersection[-1] + 1
+            
+
+
 
 ## TRANSMISSION
 def on_button_pressed_a():
@@ -261,17 +304,3 @@ radio.set_group(1)
 
 
 
-
-'''
-# Output path after reaching end
-serial.write_line("Maze path taken:")
-for step in path:
-    if step == 1:
-        serial.write_line("Forward")
-    elif step == 2:
-        serial.write_line("Left")
-    elif step == 3:
-        serial.write_line("Right")
-    elif step == 0:
-        serial.write_line("Backtrack")
-'''
