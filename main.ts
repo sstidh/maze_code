@@ -1,5 +1,3 @@
-let row: any[];
-let i: number;
 let mag: number;
 let left: number;
 let front: number;
@@ -181,16 +179,14 @@ CutebotPro.turnOffAllHeadlights()
 CutebotPro.distanceRunning(CutebotProOrientation.Advance, 15.35, CutebotProDistanceUnits.Cm)
 basic.pause(1000)
 // originate maze matrix and depth first search variables
-let N = 5
-let M = 6
-let field = []
-for (let j = 0; j < N; j++) {
-    row = []
-    for (i = 0; i < M; i++) {
-        row.push(0)
-    }
-    field.push(row)
-}
+// N = 5
+// M = 6
+// field = []
+// for j in range(N):
+// row = []
+// for i in range(M):
+// row.append(0)
+// field.append(row)
 let grid_type : number[] = []
 // Java script, defines array as an integer array
 let intersection : number[] = []

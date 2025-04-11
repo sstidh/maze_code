@@ -164,14 +164,14 @@ CutebotPro.distance_running(CutebotProOrientation.ADVANCE, 15.35, CutebotProDist
 basic.pause(1000)
 
 #originate maze matrix and depth first search variables
-N = 5
-M = 6
-field = []
-for j in range(N):
-    row = []
-    for i in range(M):
-        row.append(0)
-    field.append(row)
+#N = 5
+#M = 6
+#field = []
+#for j in range(N):
+    #row = []
+    #for i in range(M):
+        #row.append(0)
+    #field.append(row)
 
 grid_type: List[number] = [] #Java script, defines array as an integer array
 intersection: List[number] = []
