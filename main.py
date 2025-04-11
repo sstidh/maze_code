@@ -219,79 +219,40 @@ while magnet_count < 3:
     #end mazed navigation
     if magnet_count == 3:
         maze_exit = True
+
     #continue maze navigation
     else:   
-        # Look left
+    # Look left
         turn_left()
         left = check_distance()
         basic.pause(100)
-
-        # Face forward again
-        turn_right()
-        front = check_distance()
-        basic.pause(100)
-
-        # Look right
-        turn_right()
-        right = check_distance()
-        basic.pause(100)
-
-        # Face forward again
-        turn_left()
-        basic.pause(100)
-
-        # Maze Nav -- Depth first (left favoring)
-        if left>16 and front>16 and right>16:
-            grid = 1
-            grid_type.append(grid)
-            intersection.append(len(grid_type))
-        elif left > 16 and front > 16:
-            grid = 2
-            grid_type.append(grid)
-            intersection.append(len(grid_type))
-        elif left > 16 and right > 16:
-            grid = 3
-            grid_type.append(grid)
-            intersection.append(len(grid_type))
-        elif front > 16 and right > 16:
-            grid = 4
-            grid_type.append(grid)
-            intersection.append(len(grid_type))
-        elif left > 16:
-            grid = 5
-            grid_type.append(grid)
-        elif front > 16:
-            grid = 6
-            grid_type.append(grid)
-        elif right > 16:
-            grid = 7
-            grid_type.append(grid)
-        else:
-            grid = 8
-            grid_type.append(grid)
-
-        # Movememnt Decision
         if left > 16:
-            turn_left()
             move_forward()
             path.append(2)
-        elif front > 16:
-            move_forward()
-            path.append(1)
-        elif right > 16:
-            turn_right()
-            move_forward()
-            path.append(3)
         else:
-            # Dead end
-            turn_left()
-            turn_left()
-            move_forward()
-            path.append(0)
-            disp = len(path) - intersection[-1] + 1
+        # Look forward
+            turn_right()
+            front = check_distance()
+            basic.pause(100)
+            if front > 16:
+                move_forward()
+                path.append(1)
+            else:
+            # Look right
+                turn_right()
+                right = check_distance()
+                basic.pause(100)
+                if right > 16:
+                    turn_right()
+                    move_forward()
+                    path.append(3)
+                else:
+                    # Dead end
+                    turn_right()
+                    move_forward()
+                    path.append(0)
+
             
-
-
 
 ## TRANSMISSION
 def on_button_pressed_a():

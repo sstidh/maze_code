@@ -4,8 +4,6 @@ let mag: number;
 let left: number;
 let front: number;
 let right: number;
-let grid: number;
-let disp: any;
 // # MAGNET DETECTION
 // magnet checking function
 function magnet_detect(): number {
@@ -249,67 +247,35 @@ while (magnet_count < 3) {
         turn_left()
         left = check_distance()
         basic.pause(100)
-        //  Face forward again
-        turn_right()
-        front = check_distance()
-        basic.pause(100)
-        //  Look right
-        turn_right()
-        right = check_distance()
-        basic.pause(100)
-        //  Face forward again
-        turn_left()
-        basic.pause(100)
-        //  Maze Nav -- Depth first (left favoring)
-        if (left > 16 && front > 16 && right > 16) {
-            grid = 1
-            grid_type.push(grid)
-            intersection.push(grid_type.length)
-        } else if (left > 16 && front > 16) {
-            grid = 2
-            grid_type.push(grid)
-            intersection.push(grid_type.length)
-        } else if (left > 16 && right > 16) {
-            grid = 3
-            grid_type.push(grid)
-            intersection.push(grid_type.length)
-        } else if (front > 16 && right > 16) {
-            grid = 4
-            grid_type.push(grid)
-            intersection.push(grid_type.length)
-        } else if (left > 16) {
-            grid = 5
-            grid_type.push(grid)
-        } else if (front > 16) {
-            grid = 6
-            grid_type.push(grid)
-        } else if (right > 16) {
-            grid = 7
-            grid_type.push(grid)
-        } else {
-            grid = 8
-            grid_type.push(grid)
-        }
-        
-        //  Movememnt Decision
         if (left > 16) {
-            turn_left()
             move_forward()
             path.push(2)
-        } else if (front > 16) {
-            move_forward()
-            path.push(1)
-        } else if (right > 16) {
-            turn_right()
-            move_forward()
-            path.push(3)
         } else {
-            //  Dead end
-            turn_left()
-            turn_left()
-            move_forward()
-            path.push(0)
-            disp = path.length - intersection[-1] + 1
+            //  Look forward
+            turn_right()
+            front = check_distance()
+            basic.pause(100)
+            if (front > 16) {
+                move_forward()
+                path.push(1)
+            } else {
+                //  Look right
+                turn_right()
+                right = check_distance()
+                basic.pause(100)
+                if (right > 16) {
+                    turn_right()
+                    move_forward()
+                    path.push(3)
+                } else {
+                    //  Dead end
+                    turn_right()
+                    move_forward()
+                    path.push(0)
+                }
+                
+            }
+            
         }
         
     }
