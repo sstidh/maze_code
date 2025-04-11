@@ -10,6 +10,35 @@ def magnet_detect():
         CutebotPro.color_light(RGBLight.RGBR, 0x00ff00)
     return mag
 
+## BACKGROUND MUSIC
+def missionImpossibleMusic(bpm):
+    music.play(music.string_playable("G4 G4 - G4 G4 G4 Bb4 Bb4", bpm), 
+        music.PlaybackMode.UNTIL_DONE)
+    music.play(music.string_playable("C5 C5 G4 G4 - G4 G4 G4", bpm),
+        music.PlaybackMode.UNTIL_DONE)
+    music.play(music.string_playable("Fb4 Fb4 F4 F4", bpm),
+        music.PlaybackMode.UNTIL_DONE)
+    music.play(music.string_playable("G4 G4 - G4 G4 G4 Bb4 Bb4", bpm),
+        music.PlaybackMode.UNTIL_DONE)
+    music.play(music.string_playable("C5 C5 G4 G4 - G4 G4 G4", bpm),
+        music.PlaybackMode.UNTIL_DONE)
+    music.play(music.string_playable("Fb4 Fb4 F4 F4", bpm),
+        music.PlaybackMode.UNTIL_DONE)
+    music.play(music.string_playable("A6 G6 D5 D5 D5 D5 D5 D5 - -", bpm),
+        music.PlaybackMode.UNTIL_DONE)
+    music.play(music.string_playable("A6 G6 Db5 Db5 Db5 Db5 Db5 Db5 - -", bpm),
+        music.PlaybackMode.UNTIL_DONE)
+    music.play(music.string_playable("A6 G6 C5 C5 C5 C5 C5 C5 - -", bpm),
+        music.PlaybackMode.UNTIL_DONE)
+    music.play(music.string_playable("Bb4 C5 - -", bpm),
+        music.PlaybackMode.UNTIL_DONE)
+
+def onIn_background():
+    missionImpossibleMusic(350)
+    pass
+control.in_background(onIn_background)
+
+
 ## DIRECTION CORRECTION FUNCTIONS
 def straighten_to_line():
     #keep counter to break while loop
@@ -263,5 +292,59 @@ def on_button_pressed_a():
 input.on_button_pressed(Button.A, on_button_pressed_a)
 radio.set_group(1)
 
+## CELEBRATE
+def total(bpm):
+   CutebotPro.pwm_cruise_control(0,100)
+   CutebotPro.color_light(RGBLight.RGBL, 0xff0000)
+   CutebotPro.color_light(RGBLight.RGBR, 0x7f00ff)
+   music.play(music.string_playable("C", bpm),
+                music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.color_light(RGBLight.RGBL, 0xff8000)
+   CutebotPro.color_light(RGBLight.RGBR, 0x007fff)
+   music.play(music.string_playable("C", bpm),
+                    music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.color_light(RGBLight.RGBL, 0xffff00)
+   CutebotPro.color_light(RGBLight.RGBR, 0x00ff00)
+   music.play(music.string_playable("C", bpm),
+                    music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.pwm_cruise_control(100,0)
+   CutebotPro.color_light(RGBLight.RGBL, 0x00ff00)
+   CutebotPro.color_light(RGBLight.RGBR, 0xffff00)
+   music.play(music.string_playable("C", bpm*2),
+                    music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.color_light(RGBLight.RGBL, 0x00ffff)
+   CutebotPro.color_light(RGBLight.RGBR, 0xff8000)
+   music.play(music.string_playable("C5", bpm*2),
+                    music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.color_light(RGBLight.RGBL, 0x007fff)
+   CutebotPro.color_light(RGBLight.RGBR, 0xff0000)
+   music.play(music.string_playable("F", bpm),
+                    music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.color_light(RGBLight.RGBL, 0x7f00ff)
+   CutebotPro.color_light(RGBLight.RGBR, 0xff00ff)
+   music.play(music.string_playable("F", bpm),
+                    music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.color_light(RGBLight.RGBL, 0xff00ff)
+   CutebotPro.color_light(RGBLight.RGBR, 0x00ff00)
+   CutebotPro.pwm_cruise_control(0,100)
+   music.play(music.string_playable("E", bpm*2),
+                    music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.color_light(RGBLight.RGBL, 0x00ff00)
+   CutebotPro.color_light(RGBLight.RGBR, 0xff00ff)
+   CutebotPro.pwm_cruise_control(100,0)
+   music.play(music.string_playable("A", bpm*2),
+                    music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.color_light(RGBLight.RGBL, 0xff00ff)
+   CutebotPro.color_light(RGBLight.RGBR, 0x00ff00)
+   CutebotPro.pwm_cruise_control(0,100)
+   music.play(music.string_playable("E", bpm*2),
+                    music.PlaybackMode.UNTIL_DONE)
+   CutebotPro.color_light(RGBLight.RGBL, 0x00ff00)
+   CutebotPro.color_light(RGBLight.RGBR, 0xff00ff)
+   CutebotPro.pwm_cruise_control(100,0)
+   music.play(music.string_playable("A", bpm*2),
+                    music.PlaybackMode.UNTIL_DONE)
 
+
+total(130)
 

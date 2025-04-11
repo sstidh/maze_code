@@ -17,6 +17,24 @@ function magnet_detect(): number {
     return mag
 }
 
+// # BACKGROUND MUSIC
+function missionImpossibleMusic(bpm: number) {
+    music.play(music.stringPlayable("G4 G4 - G4 G4 G4 Bb4 Bb4", bpm), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("C5 C5 G4 G4 - G4 G4 G4", bpm), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("Fb4 Fb4 F4 F4", bpm), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("G4 G4 - G4 G4 G4 Bb4 Bb4", bpm), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("C5 C5 G4 G4 - G4 G4 G4", bpm), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("Fb4 Fb4 F4 F4", bpm), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("A6 G6 D5 D5 D5 D5 D5 D5 - -", bpm), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("A6 G6 Db5 Db5 Db5 Db5 Db5 Db5 - -", bpm), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("A6 G6 C5 C5 C5 C5 C5 C5 - -", bpm), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("Bb4 C5 - -", bpm), music.PlaybackMode.UntilDone)
+}
+
+control.inBackground(function onIn_background() {
+    missionImpossibleMusic(350)
+    
+})
 // # DIRECTION CORRECTION FUNCTIONS
 function straighten_to_line() {
     let error: number;
@@ -287,3 +305,47 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
     }
 })
 radio.setGroup(1)
+// # CELEBRATE
+function total(bpm: number) {
+    CutebotPro.pwmCruiseControl(0, 100)
+    CutebotPro.colorLight(RGBLight.RGBL, 0xff0000)
+    CutebotPro.colorLight(RGBLight.RGBR, 0x7f00ff)
+    music.play(music.stringPlayable("C", bpm), music.PlaybackMode.UntilDone)
+    CutebotPro.colorLight(RGBLight.RGBL, 0xff8000)
+    CutebotPro.colorLight(RGBLight.RGBR, 0x007fff)
+    music.play(music.stringPlayable("C", bpm), music.PlaybackMode.UntilDone)
+    CutebotPro.colorLight(RGBLight.RGBL, 0xffff00)
+    CutebotPro.colorLight(RGBLight.RGBR, 0x00ff00)
+    music.play(music.stringPlayable("C", bpm), music.PlaybackMode.UntilDone)
+    CutebotPro.pwmCruiseControl(100, 0)
+    CutebotPro.colorLight(RGBLight.RGBL, 0x00ff00)
+    CutebotPro.colorLight(RGBLight.RGBR, 0xffff00)
+    music.play(music.stringPlayable("C", bpm * 2), music.PlaybackMode.UntilDone)
+    CutebotPro.colorLight(RGBLight.RGBL, 0x00ffff)
+    CutebotPro.colorLight(RGBLight.RGBR, 0xff8000)
+    music.play(music.stringPlayable("C5", bpm * 2), music.PlaybackMode.UntilDone)
+    CutebotPro.colorLight(RGBLight.RGBL, 0x007fff)
+    CutebotPro.colorLight(RGBLight.RGBR, 0xff0000)
+    music.play(music.stringPlayable("F", bpm), music.PlaybackMode.UntilDone)
+    CutebotPro.colorLight(RGBLight.RGBL, 0x7f00ff)
+    CutebotPro.colorLight(RGBLight.RGBR, 0xff00ff)
+    music.play(music.stringPlayable("F", bpm), music.PlaybackMode.UntilDone)
+    CutebotPro.colorLight(RGBLight.RGBL, 0xff00ff)
+    CutebotPro.colorLight(RGBLight.RGBR, 0x00ff00)
+    CutebotPro.pwmCruiseControl(0, 100)
+    music.play(music.stringPlayable("E", bpm * 2), music.PlaybackMode.UntilDone)
+    CutebotPro.colorLight(RGBLight.RGBL, 0x00ff00)
+    CutebotPro.colorLight(RGBLight.RGBR, 0xff00ff)
+    CutebotPro.pwmCruiseControl(100, 0)
+    music.play(music.stringPlayable("A", bpm * 2), music.PlaybackMode.UntilDone)
+    CutebotPro.colorLight(RGBLight.RGBL, 0xff00ff)
+    CutebotPro.colorLight(RGBLight.RGBR, 0x00ff00)
+    CutebotPro.pwmCruiseControl(0, 100)
+    music.play(music.stringPlayable("E", bpm * 2), music.PlaybackMode.UntilDone)
+    CutebotPro.colorLight(RGBLight.RGBL, 0x00ff00)
+    CutebotPro.colorLight(RGBLight.RGBR, 0xff00ff)
+    CutebotPro.pwmCruiseControl(100, 0)
+    music.play(music.stringPlayable("A", bpm * 2), music.PlaybackMode.UntilDone)
+}
+
+total(130)
